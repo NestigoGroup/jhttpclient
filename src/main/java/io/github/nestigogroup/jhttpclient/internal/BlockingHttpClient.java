@@ -1,5 +1,7 @@
 package io.github.nestigogroup.jhttpclient.internal;
 
+import io.github.nestigogroup.jhttpclient.helpers.RequestsHelper;
+
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.URI;
@@ -51,12 +53,12 @@ public class BlockingHttpClient {
     }
 
     public HttpResponse<Void> headBodyHandler(String url) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder().uri(URI.create(url)).method("HEAD", HttpRequest.BodyPublishers.noBody()).headers(convertToHeadersArray()).build();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).method("HEAD", HttpRequest.BodyPublishers.noBody()).headers(RequestsHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, HttpResponse.BodyHandlers.discarding());
     }
 
     public HttpResponse<?> getBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder().uri(URI.create(url)).GET().headers(convertToHeadersArray()).build();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).GET().headers(RequestsHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
 
@@ -76,7 +78,7 @@ public class BlockingHttpClient {
     }
 
     public HttpResponse<?> postBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder().uri(URI.create(url)).POST(body).headers(convertToHeadersArray()).build();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).POST(body).headers(RequestsHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
 
@@ -96,7 +98,7 @@ public class BlockingHttpClient {
     }
 
     public HttpResponse<?> putBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder().uri(URI.create(url)).PUT(body).headers(convertToHeadersArray()).build();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).PUT(body).headers(RequestsHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
 
@@ -116,7 +118,7 @@ public class BlockingHttpClient {
     }
 
     public HttpResponse<?> patchBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder().uri(URI.create(url)).method("PATCH", body).headers(convertToHeadersArray()).build();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).method("PATCH", body).headers(RequestsHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
 
@@ -136,7 +138,7 @@ public class BlockingHttpClient {
     }
 
     public HttpResponse<?> deleteBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler) throws IOException, InterruptedException {
-        var request = HttpRequest.newBuilder().uri(URI.create(url)).DELETE().headers(convertToHeadersArray()).build();
+        var request = HttpRequest.newBuilder().uri(URI.create(url)).DELETE().headers(RequestsHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
 
@@ -154,16 +156,5 @@ public class BlockingHttpClient {
     public HttpResponse<Path> deleteFile(String url, Path path) throws IOException, InterruptedException {
         return (HttpResponse<Path>) deleteBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
     }
-
-    private String[] convertToHeadersArray() {
-        var headerAsList = new LinkedList<String>();
-        for(var header: headers.entrySet()) {
-            headerAsList.add(header.getKey());
-            headerAsList.add(header.getValue());
-        }
-        return headerAsList.toArray(new String[0]);
-    }
-
-
 
 }

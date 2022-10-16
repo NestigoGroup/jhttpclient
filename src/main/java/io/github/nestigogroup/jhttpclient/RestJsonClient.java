@@ -2,6 +2,8 @@ package io.github.nestigogroup.jhttpclient;
 
 import io.github.nestigogroup.jhttpclient.interfaces.IObjectMapper;
 import io.github.nestigogroup.jhttpclient.internal.BlockingHttpClient;
+import io.github.nestigogroup.jhttpclient.responses.NoBodyResponse;
+import io.github.nestigogroup.jhttpclient.responses.MappedResponse;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -10,7 +12,6 @@ import java.net.http.HttpRequest;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 public class RestJsonClient extends BlockingHttpClient {
@@ -33,27 +34,33 @@ public class RestJsonClient extends BlockingHttpClient {
         addHeader("Content-Type", "application/json");
     }
 
-    public Map<String, List<String>> head(String url) throws IOException, InterruptedException {
-        return headBodyHandler(url).headers().map();
+    public NoBodyResponse head(String url) throws IOException, InterruptedException {
+        var resp = headBodyHandler(url);
+        return new NoBodyResponse(resp.statusCode(), resp.headers().map());
     }
-    public Object get(String url, Class<?> outClass) throws IOException, InterruptedException {
-        return externalMapper.convertFromJson(getString(url).body(), outClass);
+    public MappedResponse get(String url, Class<?> outClass) throws IOException, InterruptedException {
+        var resp = getString(url);
+        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     public Object post(String url, Class<?> outClass, Object body) throws IOException, InterruptedException {
-        return externalMapper.convertFromJson(postString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body))).body(), outClass);
+        var resp = postString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body)));
+        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     public Object put(String url, Class<?> outClass, Object body) throws IOException, InterruptedException {
-        return externalMapper.convertFromJson(putString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body))).body(), outClass);
+        var resp = putString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body)));
+        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     public Object patch(String url, Class<?> outClass, Object body) throws IOException, InterruptedException {
-        return externalMapper.convertFromJson(patchString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body))).body(), outClass);
+        var resp = patchString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body)));
+        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     public Object delete(String url, Class<?> outClass) throws IOException, InterruptedException {
-        return externalMapper.convertFromJson(deleteString(url).body(), outClass);
+        var resp = deleteString(url);
+        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     public void downloadFile(String url, Path downloadPath) throws IOException, InterruptedException {

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -19,6 +20,15 @@ public class RequestsHelper {
     private static final String DOUBLE_DASH = "--";
 
     private RequestsHelper() {}
+
+    public static String[] convertToHeadersArray(Map<String, String> headers) {
+        var headerAsList = new LinkedList<String>();
+        for(var header: headers.entrySet()) {
+            headerAsList.add(header.getKey());
+            headerAsList.add(header.getValue());
+        }
+        return headerAsList.toArray(new String[0]);
+    }
 
     public static HttpRequest.BodyPublisher ofMultipartData(Map<Object, Object> data, String boundary, Charset charset) throws IOException {
         List<byte[]> byteArrays = new ArrayList<>();

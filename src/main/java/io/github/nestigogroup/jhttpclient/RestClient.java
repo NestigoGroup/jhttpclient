@@ -1,6 +1,8 @@
 package io.github.nestigogroup.jhttpclient;
 
 import io.github.nestigogroup.jhttpclient.internal.BlockingHttpClient;
+import io.github.nestigogroup.jhttpclient.responses.NoBodyResponse;
+import io.github.nestigogroup.jhttpclient.responses.StringResponse;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -9,7 +11,6 @@ import java.net.http.HttpRequest;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 public class RestClient extends BlockingHttpClient {
@@ -24,27 +25,33 @@ public class RestClient extends BlockingHttpClient {
         addHeader("Content-Type", "application/json");
     }
 
-    public Map<String, List<String>> head(String url) throws IOException, InterruptedException {
-        return headBodyHandler(url).headers().map();
+    public NoBodyResponse head(String url) throws IOException, InterruptedException {
+        var resp = headBodyHandler(url);
+        return new NoBodyResponse(resp.statusCode(), resp.headers().map());
     }
-    public String get(String url) throws IOException, InterruptedException {
-        return getString(url).body();
-    }
-
-    public String post(String url, String body) throws IOException, InterruptedException {
-        return postString(url, HttpRequest.BodyPublishers.ofString(body)).body();
+    public StringResponse get(String url) throws IOException, InterruptedException {
+        var resp = getString(url);
+        return new StringResponse(resp.statusCode(), resp.headers().map(), resp.body());
     }
 
-    public String put(String url, String body) throws IOException, InterruptedException {
-        return putString(url, HttpRequest.BodyPublishers.ofString(body)).body();
+    public StringResponse post(String url, String body) throws IOException, InterruptedException {
+        var resp = postString(url, HttpRequest.BodyPublishers.ofString(body));
+        return new StringResponse(resp.statusCode(), resp.headers().map(), resp.body());
     }
 
-    public String patch(String url, String body) throws IOException, InterruptedException {
-        return patchString(url, HttpRequest.BodyPublishers.ofString(body)).body();
+    public StringResponse put(String url, String body) throws IOException, InterruptedException {
+        var resp = putString(url, HttpRequest.BodyPublishers.ofString(body));
+        return new StringResponse(resp.statusCode(), resp.headers().map(), resp.body());
     }
 
-    public String delete(String url) throws IOException, InterruptedException {
-        return deleteString(url).body();
+    public StringResponse patch(String url, String body) throws IOException, InterruptedException {
+        var resp = patchString(url, HttpRequest.BodyPublishers.ofString(body));
+        return new StringResponse(resp.statusCode(), resp.headers().map(), resp.body());
+    }
+
+    public StringResponse delete(String url) throws IOException, InterruptedException {
+        var resp = deleteString(url);
+        return new StringResponse(resp.statusCode(), resp.headers().map(), resp.body());
     }
 
     public void downloadFile(String url, Path downloadPath) throws IOException, InterruptedException {
