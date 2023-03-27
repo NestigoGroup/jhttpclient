@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 /**
  * Simplified Async Rest Http Client for working with Rest services that handles serialization/deserialization of request/responses
@@ -55,6 +56,23 @@ public class AsyncRestJsonClient extends AsyncHttpClient {
      */
     public AsyncRestJsonClient(HttpClient.Version version, HttpClient.Redirect redirectPolicy, Duration timeout, SSLContext sslContext, Map<String, String> headers, Charset charset, IObjectMapper objectMapper) {
         super(version, redirectPolicy, timeout, sslContext, headers, charset);
+        externalMapper = objectMapper;
+        addHeader("Content-Type", "application/json");
+    }
+
+    /**
+     * Creates an instance of the {@link AsyncRestJsonClient} with the specified parameters and <b>Content-Type</b> as <i>application/json</i>
+     * @param version the HTTP version (refer: {@link java.net.http.HttpClient.Version})
+     * @param executor the underlining executor to use
+     * @param redirectPolicy the redirect policy (refer: {@link java.net.http.HttpClient.Redirect})
+     * @param timeout the timeout as {@link Duration}
+     * @param sslContext the {@link SSLContext}
+     * @param headers {@link Map} of header key/value pairs to be included in all requests
+     * @param charset The specified {@link Charset}
+     * @param objectMapper {@link IObjectMapper} implementation
+     */
+    public AsyncRestJsonClient(HttpClient.Version version, Executor executor, HttpClient.Redirect redirectPolicy, Duration timeout, SSLContext sslContext, Map<String, String> headers, Charset charset, IObjectMapper objectMapper) {
+        super(version, executor, redirectPolicy, timeout, sslContext, headers, charset);
         externalMapper = objectMapper;
         addHeader("Content-Type", "application/json");
     }

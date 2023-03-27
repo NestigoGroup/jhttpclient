@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Simplified Rest Http Client for working with Rest services
@@ -38,6 +39,21 @@ public class RestClient extends BlockingHttpClient {
      */
     public RestClient(HttpClient.Version version, HttpClient.Redirect redirectPolicy, Duration timeout, SSLContext sslContext, Map<String, String> headers, Charset charset) {
         super(version, redirectPolicy, timeout, sslContext, headers, charset);
+        addHeader("Content-Type", "application/json");
+    }
+
+    /**
+     * Creates an instance of the {@link RestClient} with the specified parameters and <b>Content-Type</b> as <i>application/json</i>
+     * @param version the HTTP version (refer: {@link java.net.http.HttpClient.Version})
+     * @param executor the underlining executor to use
+     * @param redirectPolicy the redirect policy (refer: {@link java.net.http.HttpClient.Redirect})
+     * @param timeout the timeout as {@link Duration}
+     * @param sslContext the {@link SSLContext}
+     * @param headers {@link Map} of header key/value pairs to be included in all requests
+     * @param charset The specified {@link Charset}
+     */
+    public RestClient(HttpClient.Version version, Executor executor, HttpClient.Redirect redirectPolicy, Duration timeout, SSLContext sslContext, Map<String, String> headers, Charset charset) {
+        super(version, executor, redirectPolicy, timeout, sslContext, headers, charset);
         addHeader("Content-Type", "application/json");
     }
 
