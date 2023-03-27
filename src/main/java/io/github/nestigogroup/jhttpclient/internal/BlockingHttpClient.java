@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Blocking Http Client build around the {@link HttpClient}
@@ -44,9 +45,26 @@ public class BlockingHttpClient {
      * @param charset The specified {@link Charset}
      */
     public BlockingHttpClient(HttpClient.Version version, HttpClient.Redirect redirectPolicy, Duration timeout, SSLContext sslContext, Map<String, String> headers, Charset charset) {
+        this(version, null, redirectPolicy, timeout, sslContext, headers, charset);
+    }
+
+    /**
+     * Creates an instance of the {@link BlockingHttpClient} with the specified parameters
+     * @param version the HTTP version (refer: {@link java.net.http.HttpClient.Version})
+     * @param executor the underlining executor to use
+     * @param redirectPolicy the redirect policy (refer: {@link java.net.http.HttpClient.Redirect})
+     * @param timeout the timeout as {@link Duration}
+     * @param sslContext the {@link SSLContext}
+     * @param headers {@link Map} of header key/value pairs to be included in all requests
+     * @param charset The specified {@link Charset}
+     */
+    public BlockingHttpClient(HttpClient.Version version, Executor executor, HttpClient.Redirect redirectPolicy, Duration timeout, SSLContext sslContext, Map<String, String> headers, Charset charset) {
         this.headers = new HashMap<>();
         var clientBuilder = HttpClient.newBuilder();
         clientBuilder.version(version);
+        if(executor != null) {
+            clientBuilder.executor(executor);
+        }
         clientBuilder.followRedirects(redirectPolicy);
         clientBuilder.connectTimeout(timeout);
         clientBuilder.sslContext(sslContext);
