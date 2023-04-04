@@ -3,6 +3,7 @@ package io.github.nestigogroup.jhttpclient;
 import io.github.nestigogroup.jhttpclient.exceptions.ObjectMappingException;
 import io.github.nestigogroup.jhttpclient.interfaces.IObjectMapper;
 import io.github.nestigogroup.jhttpclient.internal.BlockingHttpClient;
+import io.github.nestigogroup.jhttpclient.responses.FileResponse;
 import io.github.nestigogroup.jhttpclient.responses.NoBodyResponse;
 import io.github.nestigogroup.jhttpclient.responses.MappedResponse;
 
@@ -146,9 +147,11 @@ public class RestJsonClient extends BlockingHttpClient {
      * Downloads a file to specified location
      * @param url - The file URL
      * @param downloadPath - The location where the file to be stored
+     * @return FileResponse object containing the response code, response headers and the response body as {@link Path}
      */
-    public void downloadFile(String url, Path downloadPath) throws IOException, InterruptedException {
-        getFile(url, downloadPath);
+    public FileResponse downloadFile(String url, Path downloadPath) throws IOException, InterruptedException {
+        var resp = getFile(url, downloadPath);
+        return new FileResponse(resp.statusCode(), resp.headers().map(), resp.body());
     }
 
 }
