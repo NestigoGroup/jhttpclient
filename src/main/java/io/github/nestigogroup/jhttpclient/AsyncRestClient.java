@@ -1,6 +1,7 @@
 package io.github.nestigogroup.jhttpclient;
 
 import io.github.nestigogroup.jhttpclient.internal.AsyncHttpClient;
+import io.github.nestigogroup.jhttpclient.responses.FileResponse;
 import io.github.nestigogroup.jhttpclient.responses.NoBodyResponse;
 import io.github.nestigogroup.jhttpclient.responses.StringResponse;
 
@@ -119,8 +120,9 @@ public class AsyncRestClient extends AsyncHttpClient {
      * Downloads a file to specified location
      * @param url - The file URL
      * @param downloadPath - The location where the file to be stored
+     * @return CompletableFuture resolving to {@link FileResponse object} containing the response code, response headers and the response body as {@link Path}
      */
-    public void downloadFile(String url, Path downloadPath) throws ExecutionException, InterruptedException {
-        getFile(url, downloadPath).get();
+    public CompletableFuture<FileResponse> downloadFile(String url, Path downloadPath) throws ExecutionException, InterruptedException {
+        return getFile(url, downloadPath).thenApplyAsync(resp -> new FileResponse(resp.statusCode(), resp.headers().map(), resp.body()));
     }
 }
