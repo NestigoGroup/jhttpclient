@@ -21,9 +21,9 @@ import java.util.concurrent.Executor;
  */
 public class AsyncHttpClient {
 
-    private HttpClient httpClient;
-    private Map<String, String> headers;
-    private Charset charset;
+    private final HttpClient httpClient;
+    private final Map<String, String> headers;
+    private final Charset charset;
 
     /**
      * Creates an instance of the {@link AsyncHttpClient} with HTTP version 1.1, preventing redirects from <i>Https</i> to <i>Http</i>, 30 seconds timeout and UTF-8 as Charset
@@ -110,7 +110,7 @@ public class AsyncHttpClient {
      * @param respHandler The specific handler to process the response (refer: {@link java.net.http.HttpResponse.BodyHandler})
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    public CompletableFuture getBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler) {
+    public <T> CompletableFuture<HttpResponse<T>> getBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler) {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).GET().headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.sendAsync(request, respHandler);
     }
@@ -120,7 +120,6 @@ public class AsyncHttpClient {
      * @param url The Request URL
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<byte[]>> getBinary(String url) {
         return getBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray());
     }
@@ -130,7 +129,6 @@ public class AsyncHttpClient {
      * @param url The Request URL
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<String>> getString(String url) {
         return getBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset));
     }
@@ -141,7 +139,6 @@ public class AsyncHttpClient {
      * @param path The location where the file should be downloaded
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<Path>> getFile(String url, Path path) {
         return getBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
     }
@@ -153,7 +150,7 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    public CompletableFuture postBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) {
+    public <T> CompletableFuture<HttpResponse<T>> postBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler, HttpRequest.BodyPublisher body) {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).POST(body).headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.sendAsync(request, respHandler);
     }
@@ -164,7 +161,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<byte[]>> postBinary(String url, HttpRequest.BodyPublisher body) {
         return postBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
     }
@@ -175,7 +171,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<String> >postString(String url, HttpRequest.BodyPublisher body) {
         return postBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
     }
@@ -187,7 +182,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<Path>> postFile(String url, Path path, HttpRequest.BodyPublisher body) {
         return postBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
     }
@@ -199,7 +193,7 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    public CompletableFuture putBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) {
+    public <T> CompletableFuture<HttpResponse<T>> putBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler, HttpRequest.BodyPublisher body) {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).PUT(body).headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.sendAsync(request, respHandler);
     }
@@ -210,7 +204,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<byte[]>> putBinary(String url, HttpRequest.BodyPublisher body) {
         return putBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
     }
@@ -221,7 +214,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<String>> putString(String url, HttpRequest.BodyPublisher body) {
         return putBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
     }
@@ -233,7 +225,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<Path>> putFile(String url, Path path, HttpRequest.BodyPublisher body) {
         return putBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
     }
@@ -245,7 +236,7 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    public CompletableFuture patchBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) {
+    public <T> CompletableFuture<HttpResponse<T>> patchBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler, HttpRequest.BodyPublisher body) {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).method("PATCH", body).headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.sendAsync(request, respHandler);
     }
@@ -256,7 +247,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<byte[]>> patchBinary(String url, HttpRequest.BodyPublisher body) {
         return patchBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
     }
@@ -267,7 +257,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<String>> patchString(String url, HttpRequest.BodyPublisher body) {
         return patchBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
     }
@@ -279,7 +268,6 @@ public class AsyncHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<Path>> patchFile(String url, Path path, HttpRequest.BodyPublisher body) {
         return patchBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
     }
@@ -290,7 +278,7 @@ public class AsyncHttpClient {
      * @param respHandler The specific handler to process the response (refer: {@link java.net.http.HttpResponse.BodyHandler})
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    public CompletableFuture deleteBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler) {
+    public <T> CompletableFuture<HttpResponse<T>> deleteBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler) {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).DELETE().headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.sendAsync(request, respHandler);
     }
@@ -300,7 +288,6 @@ public class AsyncHttpClient {
      * @param url The Request URL
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<byte[]>> deleteBinary(String url) {
         return deleteBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray());
     }
@@ -310,7 +297,6 @@ public class AsyncHttpClient {
      * @param url The Request URL
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<String>> deleteString(String url) {
         return deleteBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset));
     }
@@ -321,7 +307,6 @@ public class AsyncHttpClient {
      * @param path The location where the file should be downloaded
      * @return CompletableFuture that resolves to {@link HttpResponse}
      */
-    @SuppressWarnings("unchecked")
     public CompletableFuture<HttpResponse<Path>> deleteFile(String url, Path path) {
         return deleteBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
     }

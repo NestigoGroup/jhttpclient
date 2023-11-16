@@ -57,7 +57,7 @@ public class RequestHelper {
     public static HttpRequest.BodyPublisher ofFormData(Map<Object, Object> data, Charset charset) {
         var builder = new StringBuilder();
         for (Map.Entry<Object, Object> entry : data.entrySet()) {
-            if (builder.length() > 0) {
+            if (!builder.isEmpty()) {
                 builder.append("&");
             }
             builder.append(URLEncoder.encode(entry.getKey().toString(), charset));
@@ -91,8 +91,7 @@ public class RequestHelper {
         for(var entry: data.entrySet()) {
             byteArrays.add(separator);
 
-            if(entry.getValue() instanceof Path) {
-                var path = (Path) entry.getValue();
+            if(entry.getValue() instanceof Path path) {
                 var mimeType = Files.probeContentType(path);
                 byteArrays.add(("\"" + entry.getKey() + "\"; filename=\"" + path.getFileName() + "\"" + LINE_SEPARATOR +"Content-Type: " + mimeType + LINE_SEPARATOR + LINE_SEPARATOR).getBytes(charset));
                 byteArrays.add(Files.readAllBytes(path));

@@ -22,5 +22,5 @@ public interface IObjectMapper {
      * @return POJO or {@link Record}
      * @throws ObjectMappingException when input String is not valid or can't be mapped to the provided {@link Class}
      */
-    Object convertFromJson(String json, Class<?> outClass) throws ObjectMappingException;
+    <T> T convertFromJson(String json, Class<T> outClass) throws ObjectMappingException;
 }
