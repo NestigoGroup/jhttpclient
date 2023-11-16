@@ -21,9 +21,9 @@ import java.util.concurrent.Executor;
  */
 public class BlockingHttpClient {
 
-    private HttpClient httpClient;
-    private Map<String, String> headers;
-    private Charset charset;
+    private final HttpClient httpClient;
+    private final Map<String, String> headers;
+    private final Charset charset;
 
     /**
      * Creates an instance of the {@link BlockingHttpClient} with HTTP version 1.1, preventing redirects from <i>Https</i> to <i>Http</i>, 30 seconds timeout and UTF-8 as Charset
@@ -110,7 +110,7 @@ public class BlockingHttpClient {
      * @param respHandler The specific handler to process the response (refer: {@link java.net.http.HttpResponse.BodyHandler})
      * @return {@link java.net.http.HttpResponse} object
      */
-    public HttpResponse<?> getBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler) throws IOException, InterruptedException {
+    public <T> HttpResponse<T> getBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).GET().headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
@@ -120,9 +120,8 @@ public class BlockingHttpClient {
      * @param url The Request URL
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<byte[]> getBinary(String url) throws IOException, InterruptedException {
-        return (HttpResponse<byte[]>) getBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray());
+        return getBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray());
     }
 
     /**
@@ -130,9 +129,8 @@ public class BlockingHttpClient {
      * @param url The Request URL
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<String> getString(String url) throws IOException, InterruptedException {
-        return (HttpResponse<String>) getBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset));
+        return getBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset));
     }
 
     /**
@@ -141,9 +139,8 @@ public class BlockingHttpClient {
      * @param path The location where the file should be downloaded
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<Path> getFile(String url, Path path) throws IOException, InterruptedException {
-        return (HttpResponse<Path>) getBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
+        return getBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
     }
 
     /**
@@ -153,7 +150,7 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    public HttpResponse<?> postBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
+    public <T> HttpResponse<T> postBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).POST(body).headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
@@ -164,9 +161,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<byte[]> postBinary(String url, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<byte[]>) postBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
+        return postBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
     }
 
     /**
@@ -175,9 +171,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<String> postString(String url, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<String>) postBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
+        return postBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
     }
 
     /**
@@ -187,9 +182,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<Path> postFile(String url, Path path, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<Path>) postBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
+        return postBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
     }
 
     /**
@@ -199,7 +193,7 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    public HttpResponse<?> putBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
+    public <T> HttpResponse<T> putBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).PUT(body).headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
@@ -210,9 +204,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<byte[]> putBinary(String url, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<byte[]>) putBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
+        return putBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
     }
 
     /**
@@ -221,9 +214,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<String> putString(String url, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<String>) putBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
+        return putBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
     }
 
     /**
@@ -233,9 +225,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<Path> putFile(String url, Path path, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<Path>) putBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
+        return putBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
     }
 
     /**
@@ -245,7 +236,7 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    public HttpResponse<?> patchBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
+    public <T> HttpResponse<T> patchBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).method("PATCH", body).headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
@@ -256,9 +247,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<byte[]> patchBinary(String url, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<byte[]>) patchBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
+        return patchBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray(), body);
     }
 
     /**
@@ -267,9 +257,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<String> patchString(String url, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<String>) patchBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
+        return patchBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset), body);
     }
 
     /**
@@ -279,9 +268,8 @@ public class BlockingHttpClient {
      * @param body The pre-build {@link java.net.http.HttpRequest.BodyPublisher} with the request body
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<Path> patchFile(String url, Path path, HttpRequest.BodyPublisher body) throws IOException, InterruptedException {
-        return (HttpResponse<Path>) patchBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
+        return patchBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path), body);
     }
 
     /**
@@ -290,7 +278,7 @@ public class BlockingHttpClient {
      * @param respHandler The specific handler to process the response (refer: {@link java.net.http.HttpResponse.BodyHandler})
      * @return {@link java.net.http.HttpResponse} object
      */
-    public HttpResponse<?> deleteBodyHandler(String url, HttpResponse.BodyHandler<?> respHandler) throws IOException, InterruptedException {
+    public <T> HttpResponse<T> deleteBodyHandler(String url, HttpResponse.BodyHandler<T> respHandler) throws IOException, InterruptedException {
         var request = HttpRequest.newBuilder().uri(URI.create(url)).DELETE().headers(RequestHelper.convertToHeadersArray(headers)).build();
         return httpClient.send(request, respHandler);
     }
@@ -300,9 +288,8 @@ public class BlockingHttpClient {
      * @param url The Request URL
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<byte[]> deleteBinary(String url) throws IOException, InterruptedException {
-        return (HttpResponse<byte[]>) deleteBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray());
+        return deleteBodyHandler(url, HttpResponse.BodyHandlers.ofByteArray());
     }
 
     /**
@@ -310,9 +297,8 @@ public class BlockingHttpClient {
      * @param url The Request URL
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<String> deleteString(String url) throws IOException, InterruptedException {
-        return (HttpResponse<String>) deleteBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset));
+        return deleteBodyHandler(url, HttpResponse.BodyHandlers.ofString(charset));
     }
 
     /**
@@ -321,9 +307,8 @@ public class BlockingHttpClient {
      * @param path The location where the file should be downloaded
      * @return {@link java.net.http.HttpResponse} object
      */
-    @SuppressWarnings("unchecked")
     public HttpResponse<Path> deleteFile(String url, Path path) throws IOException, InterruptedException {
-        return (HttpResponse<Path>) deleteBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
+        return deleteBodyHandler(url, HttpResponse.BodyHandlers.ofFileDownload(path));
     }
 
 }

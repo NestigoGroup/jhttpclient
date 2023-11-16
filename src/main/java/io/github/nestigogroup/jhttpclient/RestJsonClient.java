@@ -87,13 +87,14 @@ public class RestJsonClient extends BlockingHttpClient {
 
     /**
      * Executes a GET request
+     *
      * @param url The Request URL
      * @return MappedResponse object containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws ObjectMappingException if the deserialization fails
      */
-    public MappedResponse get(String url, Class<?> outClass) throws IOException, InterruptedException, ObjectMappingException {
+    public <T> MappedResponse<T> get(String url, Class<T> outClass) throws IOException, InterruptedException, ObjectMappingException {
         var resp = getString(url);
-        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+        return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     /**
@@ -103,9 +104,9 @@ public class RestJsonClient extends BlockingHttpClient {
      * @return MappedResponse object containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws ObjectMappingException if the serialization/deserialization fails
      */
-    public MappedResponse post(String url, Class<?> outClass, Object body) throws IOException, InterruptedException, ObjectMappingException {
+    public <T> MappedResponse<T> post(String url, Class<T> outClass, Object body) throws IOException, InterruptedException, ObjectMappingException {
         var resp = postString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body)));
-        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+        return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     /**
@@ -115,9 +116,9 @@ public class RestJsonClient extends BlockingHttpClient {
      * @return MappedResponse object containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws ObjectMappingException if the serialization/deserialization fails
      */
-    public MappedResponse put(String url, Class<?> outClass, Object body) throws IOException, InterruptedException, ObjectMappingException {
+    public <T> MappedResponse<T> put(String url, Class<T> outClass, Object body) throws IOException, InterruptedException, ObjectMappingException {
         var resp = putString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body)));
-        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+        return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     /**
@@ -127,9 +128,9 @@ public class RestJsonClient extends BlockingHttpClient {
      * @return MappedResponse object containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws ObjectMappingException if the serialization/deserialization fails
      */
-    public MappedResponse patch(String url, Class<?> outClass, Object body) throws IOException, InterruptedException, ObjectMappingException {
+    public <T> MappedResponse<T> patch(String url, Class<T> outClass, Object body) throws IOException, InterruptedException, ObjectMappingException {
         var resp = patchString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body)));
-        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+        return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     /**
@@ -138,9 +139,9 @@ public class RestJsonClient extends BlockingHttpClient {
      * @return MappedResponse object containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws ObjectMappingException if the deserialization fails
      */
-    public MappedResponse delete(String url, Class<?> outClass) throws IOException, InterruptedException, ObjectMappingException {
+    public <T> MappedResponse<T> delete(String url, Class<T> outClass) throws IOException, InterruptedException, ObjectMappingException {
         var resp = deleteString(url);
-        return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+        return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
     }
 
     /**

@@ -9,5 +9,5 @@ import java.util.Map;
  * @param headers The response {@link Map headers}
  * @param body Response as POJO/Record
  */
-public record MappedResponse(int code, Map<String, List<String>> headers, Object body) {
+public record MappedResponse<T>(int code, Map<String, List<String>> headers, T body) {
 }

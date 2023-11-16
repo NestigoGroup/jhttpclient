@@ -93,10 +93,10 @@ public class AsyncRestJsonClient extends AsyncHttpClient {
      * @return CompletableFuture resolving to {@link MappedResponse object} containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws RuntimeObjectMappingException if the deserialization fails
      */
-    public CompletableFuture<MappedResponse> get(String url, Class<?> outClass) {
+    public <T> CompletableFuture<MappedResponse<T>> get(String url, Class<T> outClass) {
         return getString(url).thenApplyAsync(resp -> {
             try {
-                return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+                return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
             } catch (ObjectMappingException e) {
                 throw new RuntimeObjectMappingException(e);
             }
@@ -110,10 +110,10 @@ public class AsyncRestJsonClient extends AsyncHttpClient {
      * @return CompletableFuture resolving to {@link StringResponse object} containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws RuntimeObjectMappingException if the serialization/deserialization fails
      */
-    public CompletableFuture<MappedResponse> post(String url, Class<?> outClass, Object body) throws ObjectMappingException {
+    public <T> CompletableFuture<MappedResponse<T>> post(String url, Class<T> outClass, Object body) throws ObjectMappingException {
         return postString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body))).thenApplyAsync(resp -> {
             try {
-                return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+                return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
             } catch (ObjectMappingException e) {
                 throw new RuntimeObjectMappingException(e);
             }
@@ -127,10 +127,10 @@ public class AsyncRestJsonClient extends AsyncHttpClient {
      * @return CompletableFuture resolving to {@link StringResponse object} containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws RuntimeObjectMappingException if the serialization/deserialization fails
      */
-    public CompletableFuture<MappedResponse> put(String url, Class<?> outClass, Object body) throws ObjectMappingException {
+    public <T> CompletableFuture<MappedResponse<T>> put(String url, Class<T> outClass, Object body) throws ObjectMappingException {
         return putString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body))).thenApplyAsync(resp -> {
             try {
-                return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+                return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
             } catch (ObjectMappingException e) {
                 throw new RuntimeObjectMappingException(e);
             }
@@ -144,10 +144,10 @@ public class AsyncRestJsonClient extends AsyncHttpClient {
      * @return CompletableFuture resolving to {@link StringResponse object} containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws RuntimeObjectMappingException if the serialization/deserialization fails
      */
-    public CompletableFuture<MappedResponse> patch(String url, Class<?> outClass, Object body) throws ObjectMappingException {
+    public <T> CompletableFuture<MappedResponse<T>> patch(String url, Class<T> outClass, Object body) throws ObjectMappingException {
         return patchString(url, HttpRequest.BodyPublishers.ofString(externalMapper.convertToJson(body))).thenApplyAsync(resp -> {
             try {
-                return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+                return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
             } catch (ObjectMappingException e) {
                 throw new RuntimeObjectMappingException(e);
             }
@@ -160,10 +160,10 @@ public class AsyncRestJsonClient extends AsyncHttpClient {
      * @return CompletableFuture resolving to {@link MappedResponse object} containing the response code, response headers and the response body as deserialized POJO/Record
      * @throws RuntimeObjectMappingException if the deserialization fails
      */
-    public CompletableFuture<MappedResponse> delete(String url, Class<?> outClass) {
+    public <T> CompletableFuture<MappedResponse<T>> delete(String url, Class<T> outClass) {
         return deleteString(url).thenApplyAsync(resp -> {
             try {
-                return new MappedResponse(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
+                return new MappedResponse<>(resp.statusCode(), resp.headers().map(), externalMapper.convertFromJson(resp.body(), outClass));
             } catch (ObjectMappingException e) {
                 throw new RuntimeObjectMappingException(e);
             }
