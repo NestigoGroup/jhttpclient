@@ -20,7 +20,7 @@ import java.util.Random;
  */
 public class RequestHelper {
 
-    private static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final String LINE_SEPARATOR = "\r\n";
     private static final String DOUBLE_DASH = "--";
 
     private RequestHelper() {}
